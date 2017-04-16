@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  db:
+    image: mongo:3.0.2
+    container_name: mongo
+    networks:
+      db_net:
+        ipv4_address: 172.16.1.1
+            
+    #  ports:
+    # - "27017:27017"
+
+  web:
+    build: form
+    command: python -u app.py
+    ports:
+      - "5000:5000"
+    volumes:
+      - form:/form
+    environment:
+      MONGODB_HOST: 172.16.1.1
+    networks:
+      db_net:
+        ipv4_address: 172.16.1.2
+
+  notification:
+    build: notify
+    command: python -u app.py
+    volumes:
+      - notify:/notify
+    environment:
+      MONGODB_HOST: 172.16.1.1
+    networks:
+      db_net:
+        ipv4_address: 172.16.1.3
+
+networks:
+  db_net:
+    external: true
+
+volumes:
+  form:   
+  notify:
