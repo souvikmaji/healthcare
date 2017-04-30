@@ -1,4 +1,2 @@
 requests
-flask
-pymongo==2.8
-mongokit
+pymongo

@@ -1,25 +1,54 @@
 import datetime
-import sys
+import json
+import time
 
 import os
+from bson import json_util
 from flask import Flask, request, render_template, jsonify
-from mongokit import Connection, Document, ValidationError
-from pymongo.errors import ConnectionFailure
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure, AutoReconnect
 
+# MONGODB_HOST = "localhost"
 MONGODB_HOST = os.environ['MONGODB_HOST']
 MONGODB_PORT = 27017
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-# connect to the database
-try:
-    connection = Connection(app.config['MONGODB_HOST'], app.config['MONGODB_PORT'])
-except ConnectionFailure:
-    print("Connection to db failed. Start MongoDB instance.")
-    sys.exit(1)
+connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+for i in range(10):
+    try:
+        connection.admin.command('ismaster')
+        break
+    except ConnectionFailure:
+        time.sleep(pow(2, i))
+        connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        print("Connection to db failed. Start MongoDB instance.")
+        # sys.exit(1)
+
+db = connection['healthcare']
+collection = db['patient_collection']
 
 
+def autoreconnect_retry(fn, retries=10):
+    """decorator for connection retrial"""
+
+    def db_op_wrapper(*args, **kwargs):
+        tries = 0
+        while tries < retries:
+            try:
+                return fn(*args, **kwargs)
+            except AutoReconnect:
+                time.sleep(pow(2, tries))
+                tries += 1
+
+        raise Exception("No luck even after %d retries. Start Mongodb \
+                            instance" % retries)
+
+    return db_op_wrapper
+
+
+# TODO: make use of
 def max_length(length):
     def validate(value):
         if len(value) <= length:
@@ -30,8 +59,9 @@ def max_length(length):
     return validate
 
 
-@connection.register
-class Patient(Document):
+# TODO: make use of
+# @connection.register
+"""class Patient(Document):
     __collection__ = 'patient_collection'
     __database__ = 'healthcare'
     structure = {
@@ -48,10 +78,7 @@ class Patient(Document):
         'name': max_length(50),
         'ph_no': max_length(12)
     }
-    use_dot_notation = True
-
-    def __repr__(self):
-        return '<User %r,%r>' % (self.name, self.ph_no)
+"""
 
 
 @app.route('/')
@@ -59,6 +86,7 @@ def form():
     return render_template('form_sumbit.html')
 
 
+@autoreconnect_retry
 @app.route('/get_info', methods=['GET'])
 def get_info():
     name = request.args.get('name')
@@ -66,11 +94,13 @@ def get_info():
     for patient in connection.Patient.find({'name': name}):
         for med in patient.medicines:
             d.append(med['time'])
-    return jsonify(d)
+    return dumps(d)
 
 
+@autoreconnect_retry
 @app.route('/save', methods=['POST'])
 def save():
+    # get data from form
     name = request.form['name']
     ph_no = request.form['ph_no']
     med_name = request.form['med_name']
@@ -79,24 +109,19 @@ def save():
         med_time = datetime.datetime.strptime(request.form['time'], '%H:%M')
     except ValueError:
         print("time field empty")
-        # raise
-    # print med_time
-    patient = connection.Patient()
 
-    patient['name'] = name
-    patient['ph_no'] = ph_no
-    patient['medicines'].append({'name': med_name,
-                                 'qty': med_qty,
-                                 'time': [med_time]})
+    # construct document from data
+    patient = {"name": name,
+               "ph_no": ph_no,
+               "medicines": [{"name": med_name,
+                              "qty": med_qty,
+                              "time": [med_time]
+                              }]
+               }
+    collection.insert_one(patient)
 
-    patient.save()
-    print "type: ", type(patient)
-
-    #    for d in connection.Patient.find():
-    #        return jsonify(d)
-
-    return render_template('form_action.html', name=name, ph_no=ph_no, med_name=med_name, med_qty=med_qty,
-                           time=med_time)
+    sanitized = json.loads(json_util.dumps(patient))
+    return jsonify(sanitized)
 
 
 if __name__ == '__main__':

@@ -3,19 +3,24 @@ import time
 from datetime import datetime
 
 import os
-from mongokit import *
+from pymongo import MongoClient
 
 MONGODB_HOST = os.environ['MONGODB_HOST']
 # MONGODB_HOST = '172.17.0.2'
 MONGODB_PORT = 27017
 HSP_API_KEY = "8b6dc2b0-9671-4eba-b136-9532affec325"
 s = sched.scheduler(time.time, time.sleep)
-connection = Connection(MONGODB_HOST, MONGODB_PORT)
+client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+db = client['healthcare']
+collection = db['patient_collection']
+
+
+# connection = Connection(MONGODB_HOST, MONGODB_PORT)
 
 
 def send_sms():
     print "Looking up db at: ", datetime.now()
-    for patient in connection.healthcare.patient_collection.find():
+    for patient in collection.find():
         for med in patient['medicines']:
             for t in med['time']:
                 time_now = datetime.now()
@@ -30,7 +35,6 @@ def send_sms():
 
 
 if __name__ == "__main__":
-    print "Host address:" + MONGODB_HOST
     while (True):
         s.enter(6, 1, send_sms, ())
         s.run()
