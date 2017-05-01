@@ -8,9 +8,14 @@ $ mongo
 > db.help(): list of commands
 > db.stats()
 > show collections
-> db.patient_collection.show()
+> db.patient_collection.find()
 
 $ sudo service mongod stop
 
 **Docker**
 $ sudo systemctl start docker
+or
+$ sudo service docker start
+
+$ sudo docker-compose build
+$ sudo docker-compose up
