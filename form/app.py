@@ -94,7 +94,7 @@ def get_info():
     for patient in connection.Patient.find({'name': name}):
         for med in patient.medicines:
             d.append(med['time'])
-    return dumps(d)
+    return json_util.dumps(d)
 
 
 @autoreconnect_retry
