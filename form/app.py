@@ -1,22 +1,27 @@
+import ConfigParser
 import datetime
 import json
-import time
-
 import os
+import time
 from bson import json_util
 from flask import Flask, request, render_template, jsonify
 from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure, AutoReconnect
+from pymongo.errors import ConnectionFailure
+
+from libs.reconnect import autoreconnect_retry
+
+db_config = ConfigParser.RawConfigParser()
+db_config.read('config/db.cfg')
 
 # MONGODB_HOST = "localhost"
-MONGODB_HOST = os.environ['MONGODB_HOST']
-MONGODB_PORT = 27017
+MONGODB_HOST = os.environ['MONGODB_HOST']  # TODO: read from config?
+MONGODB_PORT = db_config.getint('MONGODB', 'PORT_NO')
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
-for i in range(10):
+for i in range(100):
     try:
         connection.admin.command('ismaster')
         break
@@ -24,28 +29,9 @@ for i in range(10):
         time.sleep(pow(2, i))
         connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
         print("Connection to db failed. Start MongoDB instance.")
-        # sys.exit(1)
 
-db = connection['healthcare']
-collection = db['patient_collection']
-
-
-def autoreconnect_retry(fn, retries=10):
-    """decorator for connection retrial"""
-
-    def db_op_wrapper(*args, **kwargs):
-        tries = 0
-        while tries < retries:
-            try:
-                return fn(*args, **kwargs)
-            except AutoReconnect:
-                time.sleep(pow(2, tries))
-                tries += 1
-
-        raise Exception("No luck even after %d retries. Start Mongodb \
-                            instance" % retries)
-
-    return db_op_wrapper
+db = connection[db_config.get('MONGODB', 'DATABASE_NAME')]
+collection = db[db_config.get('MONGODB', 'COLLECTION_NAME')]
 
 
 # TODO: make use of

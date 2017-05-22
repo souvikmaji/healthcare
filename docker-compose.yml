@@ -13,6 +13,8 @@ services:
       - db
     volumes:
       - ./form:/form
+      - ./config:/form/config
+      - ./libs:/form/libs
     environment:
       MONGODB_HOST: db
     
@@ -23,5 +25,7 @@ services:
       - db
     volumes:
       - ./notify:/notify
+      - ./config:/notify/config
+      - ./libs:/notify/libs
     environment:
       MONGODB_HOST: db
