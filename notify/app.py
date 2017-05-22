@@ -3,6 +3,7 @@ import os
 import sched
 import time
 from datetime import datetime
+
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 
@@ -19,7 +20,7 @@ MONGODB_PORT = db_config.getint('MONGODB', 'PORT_NO')
 HSP_API_KEY = sms_config.get('HSPSMS', 'API_KEY')
 hsp_user = sms_config.get('HSPSMS', 'USERNAME')
 hsp_sender = sms_config.get('HSPSMS', 'SENDER_NAME')
-sched_interval = sms_config.getint('HSPSMS', 'INTERVAL')
+sched_interval = eval(sms_config.get('HSPSMS', 'INTERVAL'))
 s = sched.scheduler(time.time, time.sleep)
 
 client = MongoClient(MONGODB_HOST, MONGODB_PORT)
@@ -57,5 +58,6 @@ def send_sms():
 
 if __name__ == "__main__":
     while True:
+        s.enter(1, 1, send_sms, ())
         s.enter(sched_interval, 1, send_sms, ())
         s.run()

@@ -5,27 +5,26 @@ services:
     image: mongo
   
   web:
+    image: souvikmaji94/healthcarereminder_web
     build: form
     command: python -u app.py
-    ports:
-    - "5000:5000"
     links:
       - db
     volumes:
-      - ./form:/form
       - ./config:/form/config
       - ./libs:/form/libs
     environment:
       MONGODB_HOST: db
     
   notification:
+    image: souvikmaji94/healthcarereminder_notification
     build: notify
     command: python -u app.py
     links:
       - db
     volumes:
-      - ./notify:/notify
       - ./config:/notify/config
       - ./libs:/notify/libs
     environment:
       MONGODB_HOST: db
+        
