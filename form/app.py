@@ -3,9 +3,10 @@ import datetime
 import json
 import os
 import time
+
 from bson import json_util
 from flask import Flask, request, render_template, jsonify
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import ConnectionFailure
 
 from libs.reconnect import autoreconnect_retry
@@ -34,7 +35,7 @@ db = connection[db_config.get('MONGODB', 'DATABASE_NAME')]
 collection = db[db_config.get('MONGODB', 'COLLECTION_NAME')]
 
 
-# TODO: make use of
+# TODO: server side form validation
 def max_length(length):
     def validate(value):
         if len(value) <= length:
@@ -43,9 +44,6 @@ def max_length(length):
         raise ValidationError('%s must be at most {} characters long'.format(length))
 
     return validate
-
-
-# TODO: make use of
 # @connection.register
 """class Patient(Document):
     __collection__ = 'patient_collection'
@@ -77,10 +75,10 @@ def form():
 def get_info():
     name = request.args.get('name')
     d = []
-    for patient in connection.Patient.find({'name': name}):
-        for med in patient.medicines:
-            d.append(med['time'])
-    return json_util.dumps(d)
+    for patient in collection.find({'name': name}):
+        return json.loads(json_util.dumps(patient))
+
+    return "Not found"
 
 
 @autoreconnect_retry
@@ -93,19 +91,31 @@ def save():
     med_qty = request.form['med_qty']
     try:
         med_time = datetime.datetime.strptime(request.form['time'], '%H:%M')
+        # construct document from data
+        patient = {"name": name,
+                   "ph_no": ph_no,
+                   "medicines": [{"name": med_name,
+                                  "qty": med_qty,
+                                  "time": [med_time]
+                                  }]
+                   }
+        collection.insert_one(patient)
+
+        sanitized = json.loads(json_util.dumps(patient))
     except ValueError:
         print("time field empty")
+        sanitized = ""
 
-    # construct document from data
-    patient = {"name": name,
-               "ph_no": ph_no,
-               "medicines": [{"name": med_name,
-                              "qty": med_qty,
-                              "time": [med_time]
-                              }]
-               }
-    collection.insert_one(patient)
+    return jsonify(sanitized)
 
+
+@autoreconnect_retry
+@app.route('/missed', methods=['POST'])
+def missed_med():
+    userid = request.form['id_']
+    miss_count = request.form['count']
+    patient = collection.find_one_and_update(query={'name': userid}, update={'$set': {'count': miss_count}},
+                                             return_document=ReturnDocument.AFTER)
     sanitized = json.loads(json_util.dumps(patient))
     return jsonify(sanitized)
 

@@ -46,18 +46,19 @@ def send_sms():
             for t in med['time']:
                 time_now = datetime.now()
                 if time_now.hour == t.hour:
-                    message = patient['name'] + ", time for " + med['name'] + " quantity:" + med[
+                    message = patient['name'] + "(id: " + str(patient['_id']) + " ) , time for " + med[
+                        'name'] + " quantity:" + med[
                         'qty'] + " at time: " + str(t.hour) + ':' + str(t.minute)
                     url = "http://sms.hspsms.com/sendSMS?username=" + hsp_user + "&message=" \
                     + message + "&sendername=" + hsp_sender + "&smstype=TRANS&numbers=" + \
                           patient['ph_no'] + "&apikey=" + HSP_API_KEY
                     # r = requests.get(url)
                     #print r.text
-                    print message
+                    print message + ":" + url
 
 
 if __name__ == "__main__":
     while True:
-        s.enter(1, 1, send_sms, ())
+        s.enter(5 * 60, 1, send_sms, ())
         s.enter(sched_interval, 1, send_sms, ())
         s.run()
