@@ -64,13 +64,54 @@ def max_length(length):
 """
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def form():
     return render_template('form_sumbit.html')
 
 
+@app.route('/index/', methods=['GET'])
+def index():
+    return 'index page'
+
+
+@app.route('/user/', methods=['GET'])
+def user():
+    return 'user home page'
+
+
+@app.route('/user/add_med/', methods=['GET', 'POST'])
+def add_medicine():
+    #TODO: if else based on method
+    return 'get medicine form'
+
+@app.route('/user/meds/', methods=[])
+def meds():
+    return 'get list of all medicines used by a user'
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    return 'log in a user and redirect to his home page'
+
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+    return 'register a new user'
+
+@app.route('/logout/', methods=['GET'])
+def logout():
+    return 'logout a user'
+
+@app.route('/meds/', methods=['GET'])
+def medicines():
+    return 'get list of authenticated medicines'
+
+#TODO: get info about a specific medicine
+# @app.route('/meds', methods=[])
+# def ():
+#     return ''
+
+
 @autoreconnect_retry
-@app.route('/get_info', methods=['GET'])
+@app.route('/get_info/', methods=['GET'])
 def get_info():
     name = request.args.get('name')
     d = []
@@ -81,7 +122,7 @@ def get_info():
 
 
 @autoreconnect_retry
-@app.route('/save', methods=['POST'])
+@app.route('/save/', methods=['POST'])
 def save():
     # get data from form
     name = request.form['name']
@@ -109,7 +150,7 @@ def save():
 
 
 @autoreconnect_retry
-@app.route('/missed', methods=['POST'])
+@app.route('/missed/', methods=['POST'])
 def missed_med():
     userid = request.form['id_']
     miss_count = request.form['count']

@@ -22,6 +22,6 @@ Run using the flask command:
 ```bash
 flask run
 ```
-*For other options to start the flask server in various modes take a look at the [flask manual](http://flask.pocoo.org/docs/0.12/quickstart/)*
+*For other options to start the flask server in various modes take a look at the [flask manual](http://flask.pocoo.org/docs/0.12/quickstart/).*
 
 Head over to http://127.0.0.1:5000/ to see what everything is all about.
