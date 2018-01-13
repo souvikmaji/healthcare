@@ -3,8 +3,8 @@ import datetime
 import json
 import time
 
+from flask import Flask, url_for, render_template, redirect, request
 from bson import json_util
-from flask import Flask, jsonify, render_template, request
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import ConnectionFailure
 
@@ -66,12 +66,12 @@ def max_length(length):
 
 @app.route('/', methods=['GET'])
 def form():
-    return render_template('form_sumbit.html')
+    return redirect(url_for('index'))
 
 
 @app.route('/index/', methods=['GET'])
 def index():
-    return 'index page'
+    return render_template('form_sumbit.html')
 
 
 @app.route('/user/', methods=['GET'])
@@ -81,30 +81,43 @@ def user():
 
 @app.route('/user/add_med/', methods=['GET', 'POST'])
 def add_medicine():
-    #TODO: if else based on method
-    return 'get medicine form'
+    if request.method == 'POST':
+        return 'add medicine'
+    else:
+        return 'get the medicine form'
 
-@app.route('/user/meds/', methods=[])
+
+@app.route('/user/meds/', methods=['GET'])
 def meds():
     return 'get list of all medicines used by a user'
 
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    return 'log in a user and redirect to his home page'
+    if request.method == 'POST':
+        return 'do_the_login'
+    else:
+        return 'show_the_login_form'
+
 
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
-    return 'register a new user'
+    if request.method == 'POST':
+        return 'register new user'
+    else:
+        return 'show_the_registration_form'
+
 
 @app.route('/logout/', methods=['GET'])
 def logout():
     return 'logout a user'
 
+
 @app.route('/meds/', methods=['GET'])
 def medicines():
     return 'get list of authenticated medicines'
 
-#TODO: get info about a specific medicine
+# TODO: get info about a specific medicine
 # @app.route('/meds', methods=[])
 # def ():
 #     return ''
