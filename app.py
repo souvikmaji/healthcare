@@ -1,22 +1,18 @@
-import ConfigParser
+import config
 import datetime
 import json
-import os
 import time
 
 from bson import json_util
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, jsonify, render_template, request
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import ConnectionFailure
 
-from libs.reconnect import autoreconnect_retry
-
-db_config = ConfigParser.RawConfigParser()
-db_config.read('config/db.cfg')
+from reconnect import autoreconnect_retry
 
 # MONGODB_HOST = "localhost"
-MONGODB_HOST = os.environ['MONGODB_HOST']  # TODO: read from config?
-MONGODB_PORT = db_config.getint('MONGODB', 'PORT_NO')
+MONGODB_HOST = config.mongodb['host']
+MONGODB_PORT = config.mongodb['port']
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -31,8 +27,8 @@ for i in range(100):
         connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
         print("Connection to db failed. Start MongoDB instance.")
 
-db = connection[db_config.get('MONGODB', 'DATABASE_NAME')]
-collection = db[db_config.get('MONGODB', 'COLLECTION_NAME')]
+db = connection[config.mongodb['name']]
+collection = "patients"
 
 
 # TODO: server side form validation
@@ -41,9 +37,12 @@ def max_length(length):
         if len(value) <= length:
             return True
         # must have %s in error format string to have mongokit place key in there
-        raise ValidationError('%s must be at most {} characters long'.format(length))
+        raise ValidationError(
+            '%s must be at most {} characters long'.format(length))
 
     return validate
+
+
 # @connection.register
 """class Patient(Document):
     __collection__ = 'patient_collection'
