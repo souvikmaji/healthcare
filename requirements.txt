@@ -1,2 +1,26 @@
-flask
-pymongo
+# This file is used by pip to install required python packages
+
+#TODO: use seperate files for different environments(prod, dev, test)
+# Usage: pip install -r requirements.txt
+
+# Flask Framework
+Flask
+
+# Flask Packages
+Flask-Login
+Flask-Migrate
+Flask-Script
+Flask-SQLAlchemy
+Flask-User
+Flask-WTF
+
+#DB
+mysql-python
+
+# Automated tests
+pytest
+pytest-cov
+
+# Development tools
+Fabric3
+tox
