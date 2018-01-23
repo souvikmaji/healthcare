@@ -26,19 +26,20 @@ def create_users():
     db.create_all()
 
     # Add users
-    user = find_or_create_user(u'Member', u'Example', u'member@example.com', 'Password1')
+    user = find_or_create_user(u'Member', u'Example', u'9999999999', u'member@example.com', 'Password1')
 
     # Save to DB
     db.session.commit()
 
 
-def find_or_create_user(first_name, last_name, email, password):
+def find_or_create_user(first_name, last_name, ph_no, email, password):
     """ Find existing user or create new user """
     user = User.query.filter(User.email == email).first()
     if not user:
         user = User(email=email,
                     first_name=first_name,
                     last_name=last_name,
+                    ph_no=ph_no,
                     password=current_app.user_manager.hash_password(password),
                     active=True,
                     confirmed_at=datetime.datetime.utcnow())

@@ -21,6 +21,7 @@ class User(db.Model, UserMixin):
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
     first_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
+    ph_no = db.Column(db.Unicode(12), nullable=False, server_default=u'')
 
 
 # Define the User registration form
@@ -30,7 +31,8 @@ class MyRegisterForm(RegisterForm):
         validators.DataRequired('First name is required')])
     last_name = StringField('Last name', validators=[
         validators.DataRequired('Last name is required')])
-
+    ph_no = StringField('Mobile Number', validators=[
+        validators.DataRequired('Phone Number is required to send you notifications')])
 
 # Define the User profile form
 class UserProfileForm(FlaskForm):
@@ -38,4 +40,6 @@ class UserProfileForm(FlaskForm):
         validators.DataRequired('First name is required')])
     last_name = StringField('Last name', validators=[
         validators.DataRequired('Last name is required')])
+    ph_no = StringField('Mobile Number', validators=[
+        validators.DataRequired('Phone Number is required to send you notifications')])
     submit = SubmitField('Save')
