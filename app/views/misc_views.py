@@ -13,9 +13,9 @@ def home_page():
     return render_template('pages/home_page.html')
 
 
-@main_blueprint.route('/member')
+@main_blueprint.route('/user')
 @login_required
-def member_page():
+def user_page():
     return render_template('pages/user_page.html')
 
 

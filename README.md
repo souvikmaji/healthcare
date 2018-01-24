@@ -2,21 +2,6 @@
 
 Get a reminder to take your medicine on time.
 
-## Code characteristics
-
-* Well organized directories with lots of comments
-    * app
-        * commands
-        * models
-        * static
-        * templates
-        * views
-    * tests
-* Includes test framework (`py.test` and `tox`)
-* Includes database migration framework (`alembic`)
-* Sends error emails to admins for unhandled exceptions
-
-
 ## Setting up a development environment
 
 We assume that you have `mysql` installed.
@@ -80,4 +65,3 @@ fab test
 ```
 
 ##TODO DB migration
-Figure out Alembic

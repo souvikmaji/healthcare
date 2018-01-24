@@ -23,4 +23,3 @@ pytest-cov
 
 # Development tools
 Fabric3
-tox

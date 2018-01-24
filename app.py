@@ -34,14 +34,6 @@ class User(db.Document, UserMixin):
 # Setup Flask-User and specify the User data-model
 user_manager = UserManager(User)
 
-@app.route('/', methods=['GET'])
-def root():
-    return redirect(url_for('index'))
-
-
-@app.route('/index/', methods=['GET'])
-def index():
-    return render_template('index.html', title='Home Page')
 
 
 @app.route('/user/', methods=['GET'])
@@ -61,27 +53,6 @@ def add_medicine():
 @app.route('/user/meds/', methods=['GET'])
 def meds():
     return 'get list of all medicines used by a user'
-
-
-@app.route('/login/', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        return 'do_the_login'
-    else:
-        return 'show_the_login_form'
-
-
-@app.route('/register/', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        return 'register new user'
-    else:
-        return 'show_the_registration_form'
-
-
-@app.route('/logout/', methods=['GET'])
-def logout():
-    return 'logout a user'
 
 
 @app.route('/meds/', methods=['GET'])

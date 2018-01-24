@@ -26,8 +26,3 @@ def test_cov():
 @task
 def db_migrate():
     local('python manage.py db')
-
-
-@task
-def tox():
-    local('tox')
