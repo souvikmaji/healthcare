@@ -14,7 +14,7 @@ Flask-SQLAlchemy
 Flask-User
 Flask-WTF
 
-#DB
+# DB
 mysql-python
 
 # Automated tests
