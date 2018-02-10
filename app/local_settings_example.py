@@ -1,14 +1,8 @@
 import os
 
-# *****************************
-# Environment specific settings
-# *****************************
-
-# DO NOT use "DEBUG = True" in production environments
 DEBUG = True
 
-# DO NOT use Unsecure Secrets in production environments
-# Generate a safe one with:
+# Generate a better secret with:
 #     python -c "import os; print repr(os.urandom(24));"
 SECRET_KEY = 'This is an UNSECURE Secret. CHANGE THIS for production environments.'
 

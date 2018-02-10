@@ -22,6 +22,13 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     ph_no = db.Column(db.Unicode(12), nullable=False, server_default=u'')
+    medicines = db.relationship('UserMedicine', backref='users', lazy=True)
+
+class UserMedicine(db.Model):
+    __tablename__ = 'user_medicine'
+    id = db.Column(db.Integer, primary_key=True)
+    medicine_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
 # Define the User registration form
@@ -42,4 +49,9 @@ class UserProfileForm(FlaskForm):
         validators.DataRequired('Last name is required')])
     ph_no = StringField('Mobile Number', validators=[
         validators.DataRequired('Phone Number is required to send you notifications')])
+    submit = SubmitField('Save')
+
+class AddMedicineForm(FlaskForm):
+    medicine_name = StringField('Name', validators=[
+        validators.DataRequired('Medicine name is required')])
     submit = SubmitField('Save')

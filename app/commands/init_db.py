@@ -4,13 +4,15 @@ from flask import current_app
 from flask_script import Command
 
 from app import db
-from app.models.user_models import User
+from app.models.user_models import User, UserMedicine
+
 
 class InitDbCommand(Command):
     """ Initialize the database."""
 
     def run(self):
         init_db()
+
 
 def init_db():
     """ Initialize the database."""
@@ -21,28 +23,26 @@ def init_db():
 
 def create_users():
     """ Create users """
-
-    # Create all tables
-    db.create_all()
-
-    # Add users
-    user = find_or_create_user(u'Member', u'Example', u'9999999999', u'member@example.com', 'Password1')
-
-    # Save to DB
+    db.create_all()  # Create all tables
+    user = find_or_create_user(u'Member', u'Example', u'9999999999',
+                               u'member@example.com', 'Password1', u'abc_medicine')
     db.session.commit()
 
 
-def find_or_create_user(first_name, last_name, ph_no, email, password):
+def find_or_create_user(first_name, last_name, ph_no, email, password, medicine_name):
     """ Find existing user or create new user """
     user = User.query.filter(User.email == email).first()
     if not user:
+        medicine = UserMedicine(medicine_name=medicine_name)
         user = User(email=email,
                     first_name=first_name,
                     last_name=last_name,
                     ph_no=ph_no,
                     password=current_app.user_manager.hash_password(password),
                     active=True,
-                    confirmed_at=datetime.datetime.utcnow())
+                    confirmed_at=datetime.datetime.utcnow(),
+                    medicines=[medicine])
 
+        db.session.add(medicine)
         db.session.add(user)
     return user
