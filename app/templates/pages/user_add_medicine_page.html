@@ -1,10 +1,9 @@
-{% extends "common/page_base.html" %}  {# common/page_base.html extends layout.html #}
+{% extends 'flask_user/public_base.html' %}
 
 {% block content %}
 {% from "flask_user/_macros.html" import render_field, render_submit_field %}
-<h1>User Medicine</h1>
+<h1>{%trans%}User Medicine{%endtrans%}</h1>
 
-{% from "common/form_macros.html" import render_field, render_submit_field %}
 <form action="" method="POST" class="form" role="form">
   <div class="row">
     <div class="col-sm-6 col-md-5 col-lg-4">
