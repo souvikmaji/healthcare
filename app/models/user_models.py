@@ -22,7 +22,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     ph_no = db.Column(db.Unicode(12), nullable=False, server_default=u'')
-    medicines = db.relationship('UserMedicine', backref='users', lazy=True)
+    medicines = db.relationship('UserMedicine', backref='user', cascade="all, delete-orphan", lazy='dynamic')
 
 class UserMedicine(db.Model):
     __tablename__ = 'user_medicine'

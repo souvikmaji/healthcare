@@ -51,7 +51,7 @@ fab runserver
 
 Point your web browser to http://localhost:5000/
 
-You can make use of the following users:
+You can make use of the following default users:
 - email `user@example.com` with password `Password1`.
 
 
@@ -64,4 +64,4 @@ py.test tests/
 fab test
 ```
 
-##TODO DB migration
+## DB migration

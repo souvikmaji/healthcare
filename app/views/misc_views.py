@@ -27,28 +27,25 @@ def user_add_medicine_page():
         medicine = UserMedicine(medicine_name=form.medicine_name.data)
         current_user.medicines.append(medicine)
         db.session.commit()
-        return 'data saved. check db'
+        return redirect(url_for('main.user_medicines_page'))
 
     return render_template('pages/user_add_medicine_page.html', form=form)
+
+@main_blueprint.route('/user/medicines', methods=['GET'])
+@login_required
+def user_medicines_page():
+    return render_template('pages/user_medicines_page.html', user=current_user)
 
 
 @main_blueprint.route('/pages/profile', methods=['GET', 'POST'])
 @login_required
 def user_profile_page():
-    # Initialize form
     form = UserProfileForm(request.form)
 
-    # Process valid POST
     if request.method == 'POST' and form.validate():
-        # Copy form fields to user_profile fields
-        form.populate_obj(current_user)
-
-        # Save user_profile
+        form.populate_obj(current_user)         # Copy form fields to user_profile fields
         db.session.commit()
-
-        # Redirect to home page
         return redirect(url_for('main.home_page'))
 
-    # Process GET or invalid POST
     return render_template('pages/user_profile_page.html',
                            form=form)

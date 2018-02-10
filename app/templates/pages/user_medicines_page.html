@@ -1,0 +1,10 @@
+{% extends "common/page_base.html" %} {# common/page_base.html extends layout.html #} {% block content %}
+<h2>{%trans%}Medicines you take{%endtrans%}</h2>
+
+<ul>
+  {%for medicine in user.medicines.all()%}
+    <li>  {{medicine.medicine_name}} </li>
+  {%endfor%}
+</ul>
+
+{% endblock %}

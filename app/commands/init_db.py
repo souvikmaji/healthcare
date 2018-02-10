@@ -25,7 +25,7 @@ def create_users():
     """ Create users """
     db.create_all()  # Create all tables
     user = find_or_create_user(u'Member', u'Example', u'9999999999',
-                               u'member@example.com', 'Password1', u'abc_medicine')
+                               u'user@example.com', 'Password1', u'abc_medicine')
     db.session.commit()
 
 
