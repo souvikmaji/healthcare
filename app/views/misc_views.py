@@ -23,7 +23,7 @@ def user_page():
 @login_required
 def user_add_medicine_page():
     form = AddMedicineForm(request.form)
-    if request.method == 'POST' and form.validate():
+    if form.validate_on_submit():
         medicine = UserMedicine(medicine_name=form.medicine_name.data)
         current_user.medicines.append(medicine)
         db.session.commit()
@@ -42,7 +42,7 @@ def user_medicines_page():
 def user_profile_page():
     form = UserProfileForm(request.form)
 
-    if request.method == 'POST' and form.validate():
+    if form.validate_on_submit():
         form.populate_obj(current_user)         # Copy form fields to user_profile fields
         db.session.commit()
         return redirect(url_for('main.home_page'))
