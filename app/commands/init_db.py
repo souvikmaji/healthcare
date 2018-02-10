@@ -4,7 +4,9 @@ from flask import current_app
 from flask_script import Command
 
 from app import db
-from app.models.user_models import User, UserMedicine
+from app.models.user_models import User, UserMedicine, MedicineSchedule
+
+from datetime import datetime
 
 
 class InitDbCommand(Command):
@@ -33,14 +35,18 @@ def find_or_create_user(first_name, last_name, ph_no, email, password, medicine_
     """ Find existing user or create new user """
     user = User.query.filter(User.email == email).first()
     if not user:
-        medicine = UserMedicine(medicine_name=medicine_name)
+        morning = MedicineSchedule(time=datetime(2018, 12, 25, 7, 0))
+        noon = MedicineSchedule(time=datetime(2018, 1, 1, 12, 0))
+        night = MedicineSchedule(time=datetime(2019, 5, 2, 17, 0))
+
+        medicine = UserMedicine(medicine_name=medicine_name, schedule=[morning, noon, night])
         user = User(email=email,
                     first_name=first_name,
                     last_name=last_name,
                     ph_no=ph_no,
                     password=current_app.user_manager.hash_password(password),
                     active=True,
-                    confirmed_at=datetime.datetime.utcnow(),
+                    confirmed_at=datetime.utcnow(),
                     medicines=[medicine])
 
         db.session.add(medicine)

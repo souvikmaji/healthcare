@@ -1,7 +1,7 @@
 {% extends 'flask_user/public_base.html' %}
 
 {% block content %}
-{% from "flask_user/_macros.html" import render_field, render_submit_field %}
+{% from "common/form_macros.html" import render_field, render_submit_field %}
 <h1>{%trans%}User Medicine{%endtrans%}</h1>
 
 <form action="" method="POST" class="form" role="form">
@@ -10,6 +10,7 @@
     {{ form.hidden_tag() }}
 
     {{ render_field(form.medicine_name, tabindex=240) }}
+    {{ render_field(form.medicine_schedule, tabindex=250) }}
     {{ render_submit_field(form.submit, tabindex=260) }}
     </div>
   </div>

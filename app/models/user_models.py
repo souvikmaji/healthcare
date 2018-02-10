@@ -1,7 +1,7 @@
 from flask_user import UserMixin
 from flask_user.forms import RegisterForm
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, validators
+from wtforms import StringField, DateTimeField, SubmitField, FieldList, validators
 from app import db
 
 
@@ -27,12 +27,19 @@ class User(db.Model, UserMixin):
 class UserMedicine(db.Model):
     __tablename__ = 'user_medicine'
     id = db.Column(db.Integer, primary_key=True)
+
     medicine_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    schedule = db.relationship('MedicineSchedule', backref='medicine', cascade="all, delete-orphan", lazy='dynamic')
 
+class MedicineSchedule(db.Model):
+    __tablename__ = 'medicine_schedule'
+    id = db.Column(db.Integer, primary_key=True)
 
-# Define the User registration form
-# It augments the Flask-User RegisterForm with additional fields
+    medicine_id = db.Column(db.Integer, db.ForeignKey('user_medicine.id'), nullable=False)
+    time = db.Column(db.DateTime(timezone=True), nullable=False)
+
+# Define the User registration form by extending Flask-User RegisterForm
 class MyRegisterForm(RegisterForm):
     first_name = StringField('First name', validators=[
         validators.DataRequired('First name is required')])
@@ -52,6 +59,6 @@ class UserProfileForm(FlaskForm):
     submit = SubmitField('Save')
 
 class AddMedicineForm(FlaskForm):
-    medicine_name = StringField('Name', validators=[
-        validators.DataRequired('Medicine name is required')])
+    medicine_name = StringField('Name', validators=[validators.DataRequired('Medicine name is required')])
+    medicine_schedule = FieldList(DateTimeField('Time to take', format='%H:%M'))
     submit = SubmitField('Save')
