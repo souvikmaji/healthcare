@@ -3,7 +3,8 @@ from flask import request, url_for
 from flask_user import current_user, login_required
 
 from app import db
-from app.models.user_models import UserProfileForm, AddMedicineForm, UserMedicine
+from app.models.user_models import UserProfileForm
+from app.models.medicine_models import UserMedicine, AddMedicineForm
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
 main_blueprint = Blueprint('main', __name__, template_folder='templates')
@@ -35,7 +36,6 @@ def user_add_medicine_page():
 @login_required
 def user_medicines_page():
     return render_template('pages/user_medicines_page.html', user=current_user)
-
 
 @main_blueprint.route('/pages/profile', methods=['GET', 'POST'])
 @login_required

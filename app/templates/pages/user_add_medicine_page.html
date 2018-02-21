@@ -10,7 +10,9 @@
     {{ form.hidden_tag() }}
 
     {{ render_field(form.medicine_name) }}
-    {{ render_field(form.medicine_schedule) }}
+    {{ render_field(form.medicine_schedule_from_date) }}
+    {{ render_field(form.medicine_schedule_to_date) }}
+    {{ render_field(form.medicine_schedule_time) }}
     {{ render_submit_field(form.submit) }}
     </div>
   </div>

@@ -4,7 +4,8 @@ from flask import current_app
 from flask_script import Command
 
 from app import db
-from app.models.user_models import User, UserMedicine, MedicineSchedule
+from app.models.user_models import User
+from app.models.medicine_models import UserMedicine, MedicineSchedule
 
 from datetime import datetime
 

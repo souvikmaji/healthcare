@@ -41,7 +41,7 @@ def create_app(extra_config_settings={}):
     csrf_protect.init_app(app)
 
     # Register blueprints
-    from app.views.misc_views import main_blueprint
+    from app.views.views import main_blueprint
     app.register_blueprint(main_blueprint)
 
     # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
@@ -57,7 +57,7 @@ def create_app(extra_config_settings={}):
 
     # Setup Flask-User to handle user account related forms
     from .models.user_models import User, MyRegisterForm
-    from .views.misc_views import user_profile_page
+    from .views.views import user_profile_page
 
     db_adapter = SQLAlchemyAdapter(db, User)  # Setup the SQLAlchemy DB Adapter
     user_manager = UserManager(db_adapter, app,  # Init Flask-User and bind to app
