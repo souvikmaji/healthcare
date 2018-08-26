@@ -1,6 +1,17 @@
 # Medicine Reminder
 
 Get a reminder to take your medicine on time.
+Provided with a search engine which will provide alternatives of the medicine you are lokking for with Side-effects and Symtomps
+
+# What we are not
+
+We are not acting as a Doctor, the data we provide will be based on History Data, we are not any consulting firm, neither we are responsible for the choices you make
+
+# What we are
+
+We help you to keep a Online Medical Profile
+We provide a reminder for you to take the Medicine in your busy Schedule
+We provide analysis on certain Factors like Possible Risks, Possible Diet charts based on your Reports.
 
 ## Setting up a development environment
 
